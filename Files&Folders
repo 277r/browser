@@ -1,0 +1,7 @@
+Makefile	file that builds this
+main.cpp	main entry point of the browser
+compression/	folder that contains compression/decompression functions
+javascript/	folder containing javascript engine
+libs/		folder containing files with functions i don't wanna make a folder for because i'd have too many folders
+network/	folder containing request functions like HTTP GET and other stuff
+render/		default html rendering (excluding video and audio)	
