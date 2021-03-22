@@ -4,9 +4,11 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <string.h>
-#include <string>
-#include "../libs/stringFunctions.cpp"
+
+
 #include <libdeflate.h>
+#include "requests.h"
+#include "../libs/stringFunctions.h"
 
 #define LINUX
 
@@ -92,7 +94,7 @@ namespace request {
 			}
 
 			// possibly return
-			std::cout << std::string(buf, bytesReceived);
+			return buf;
 
 		} while (bytesReceived == 0);
 
