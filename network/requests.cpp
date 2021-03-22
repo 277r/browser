@@ -1,26 +1,11 @@
-#include <sys/types.h>
-#include <unistd.h>
-#include <sys/socket.h>
-#include <netdb.h>
-#include <arpa/inet.h>
-#include <string.h>
 
-
-#include <libdeflate.h>
 #include "requests.h"
-#include "../libs/stringFunctions.h"
-
-#define LINUX
 
 
-
-namespace request {
-	char* getraw(std::string url, unsigned int port, std::string unused){
-		// we need to remove the port from the url
-
-
-// linux specific
-#ifdef LINUX
+namespace request
+{
+	char *getraw(std::string url, unsigned int port)
+	{
 
 		// create socket, and hostent
 		int sock;
@@ -32,19 +17,16 @@ namespace request {
 		// this turns the url into an ip
 		h = gethostbyname(url.c_str());
 
-		if (h == nullptr){
+		if (h == nullptr)
+		{
 
 			return nullptr;
 		}
-
 
 		// copy ip, set internet type (ipv4 now), set port
 		memcpy(&hint.sin_addr, h->h_addr_list[0], h->h_length);
 		hint.sin_family = AF_INET;
 		hint.sin_port = htons(port);
-
-
-
 
 		// connect to server on port using sock
 		int connectSock = connect(sock, (sockaddr *)&hint, sizeof(hint));
@@ -58,6 +40,10 @@ namespace request {
 		char *buf = new char[4096];
 		int bytesReceived;
 
+		// content length
+		int conlength;
+		// sub buffer containing content
+		char *subbuf;
 
 		// string containing the request, look in httpget.txt how this is structured
 		std::string sendData;
@@ -78,84 +64,99 @@ namespace request {
 			int sendres = send(sock, sendData.c_str(), sendData.size() + 1, 0);
 
 			// get data
-			if (sendres == -1){
+			if (sendres == -1)
+			{
 				// error happened, could not connect
 				return nullptr;
 			}
-			usleep(500000);
+			usleep(50000);
 
 			bytesReceived = recv(sock, buf, 4096, 0);
 
-
 			// byte size out of range, resize buffer and request again
-			if (bytesReceived > 4096){
+			if (bytesReceived > 4096)
+			{
 				delete[] buf;
 				buf = new char[bytesReceived];
 			}
 
 			// possibly return
-			return buf;
+			// do not return
+			//return buf;
 
 		} while (bytesReceived == 0);
-
 
 		// close socket
 		close(sock);
 
-
-
 		// check http headers
 		int enctype = 0;
 		int i = 0;
-		while (i + 16 < bytesReceived){
+		while (i + 16 < bytesReceived)
+		{
 			// check for contentEncoding
-			if (startsWith(&buf[i], "Content-Encoding")){
+			if (startsWith(&buf[i], "Content-Encoding"))
+			{
 				// skip `Content-Encoding: `
 				i += 18;
-				if (startsWith(&buf[i], "gzip")){
+				if (startsWith(&buf[i], "gzip"))
+				{
 					enctype = 1;
-					
 				}
 			}
 
+			// get content length
+			if (startsWith(&buf[i], "Content-Length"))
+			{
+				// skip `Content-Length: `
+				i += 16;
+				std::string sizeS;
+				// all lines end with \r\n so we wait until there
+				while (buf[i] != '\r' && i < bytesReceived)
+				{
+					sizeS += buf[i];
+					i++;
+				}
+				conlength = std::stoi(sizeS);
+				
+
+			}
 			// skip to next line
-			while (buf[i] != '\n' && i < bytesReceived){
+			while (buf[i] != '\n' && i < bytesReceived)
+			{
 				i++;
 			}
 			i++;
 
-
 			// check for empty line \r\n
-			if (startsWith(&buf[i], "\r\n")){
+			if (startsWith(&buf[i], "\r\n"))
+			{
+				// get pointer of end of HTTP header
+				subbuf = buf + i + 2;
 				// stop loop
 				i = bytesReceived;
 			}
 		}
-		// if gzip, gunzip
-	/*	if (type == 1){
-			// how do i do this???
-			libdeflate_gzip_decompress(0, buf, bytesReceived, )
-		}*/
 
+		// if gzip, ungzip
+		if (enctype == 1)
+		{
+			/*
+			char *oldData = buf;
+			// this segfaults
+			buf = ungzip(subbuf, conlength, conlength);
+			// ungzip doesn't delete[] the old pointer because it can't
+			delete[] oldData;
+			*/
+		}
 
-		
-
+		//std::cout << "len: " << conlength << '\n' << "enc: " << enctype;
 		return buf;
-
-#endif
-
 	}
-
-
 
 	// will probably be the same on every platform
 	void urlDecoder(std::string &url, unsigned int &port, std::string headers)
 	{
-
 	}
 
-
 };
-
-
-

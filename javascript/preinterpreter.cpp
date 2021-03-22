@@ -8,14 +8,14 @@
 std::vector<std::string> table;
 
 // return true if exists
-long long int lookup(char*data){
+long long int lookup(char *data){
 	
 	
 	
 	return 0;
 }
 
-char* preinterpret(char* data){
+char* preinterpret(char *data){
 	// current variable name
 	std::string cvarname;
 	// go on until end of string
@@ -46,6 +46,6 @@ char* preinterpret(char* data){
 	
 		data++;
 	}
+	return nullptr;
 }
-
 
