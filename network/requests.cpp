@@ -141,16 +141,19 @@ namespace request
 		// if gzip, ungzip
 		if (enctype == 1)
 		{
-			/*
+			
 			char *oldData = buf;
 			// this segfaults
 			buf = ungzip(subbuf, conlength, conlength);
 			// ungzip doesn't delete[] the old pointer because it can't
 			delete[] oldData;
-			*/
+			// set 0 character
+			buf[conlength] = 0;
 		}
-
+		
+		//output to see length and encryption type, not used anymore
 		//std::cout << "len: " << conlength << '\n' << "enc: " << enctype;
+		
 		return buf;
 	}
 
