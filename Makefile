@@ -23,6 +23,10 @@ build: ${OBJ}
 clean:
 	rm ${OBJ} browser.out
 
+cleanobj:
+	rm ${OBJ}
+
+
 %.o : %.cpp
 	$(CC) ${LDFLAGS} $(CPPFLAGS) -c $< -o $@
 

@@ -1,10 +1,24 @@
 
 #include "requests.h"
 
-
 namespace request
 {
-	char *getraw(std::string url, unsigned int port)
+	char *getByUrl(std::string &url, unsigned int port)
+	{
+		switch (port){
+			case 80: {
+				getraw(url, port);
+				break;
+			}
+			case 443: {
+				return getrawS(url, port);
+				break;
+			}
+		}
+		return getraw(url, port);
+	}
+
+	char *getraw(std::string &url, unsigned int port)
 	{
 
 		// create socket, and hostent
@@ -26,7 +40,8 @@ namespace request
 		// copy ip, set internet type (ipv4 now), set port
 		memcpy(&hint.sin_addr, h->h_addr_list[0], h->h_length);
 		hint.sin_family = AF_INET;
-		hint.sin_port = htons(port);
+		// if port == 0, set port to 80, else set port to port
+		hint.sin_port = htons(port == 0 ? 80 : port);
 
 		// connect to server on port using sock
 		int connectSock = connect(sock, (sockaddr *)&hint, sizeof(hint));
@@ -37,7 +52,7 @@ namespace request
 		}
 
 		// buffer containing the response
-		char *buf = new char[4096];
+		char *buf = new char[41943040];
 		int bytesReceived;
 
 		// content length
@@ -52,7 +67,7 @@ namespace request
 		sendData += "Host: " + url + "\r\n";
 		sendData += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8\r\n";
 		sendData += "Accept-Language: en-us\r\n";
-		sendData += "Accept-Encoding: gzip,deflate\r\n";
+		sendData += "Accept-Encoding: gzip\r\n";
 		sendData += "Connection: keep-alive\r\n";
 
 		sendData += "\r\n";
@@ -71,13 +86,15 @@ namespace request
 			}
 			usleep(50000);
 
-			bytesReceived = recv(sock, buf, 4096, 0);
+			bytesReceived = recv(sock, buf, 41943040, 0);
 
 			// byte size out of range, resize buffer and request again
-			if (bytesReceived > 4096)
+			if (bytesReceived > 41943040)
 			{
 				delete[] buf;
 				buf = new char[bytesReceived];
+				// retry
+				bytesReceived = 0;
 			}
 
 			// possibly return
@@ -106,7 +123,7 @@ namespace request
 			}
 
 			// get content length
-			if (startsWith(&buf[i], "Content-Length"))
+			else if (startsWith(&buf[i], "Content-Length"))
 			{
 				// skip `Content-Length: `
 				i += 16;
@@ -118,9 +135,8 @@ namespace request
 					i++;
 				}
 				conlength = std::stoi(sizeS);
-				
-
 			}
+
 			// skip to next line
 			while (buf[i] != '\n' && i < bytesReceived)
 			{
@@ -141,25 +157,78 @@ namespace request
 		// if gzip, ungzip
 		if (enctype == 1)
 		{
-			
+
 			char *oldData = buf;
 			// this segfaults
-			buf = ungzip(subbuf, conlength, conlength);
+			buf = compression::ungzip(subbuf, conlength, conlength);
 			// ungzip doesn't delete[] the old pointer because it can't
 			delete[] oldData;
 			// set 0 character
 			buf[conlength] = 0;
 		}
-		
+
 		//output to see length and encryption type, not used anymore
 		//std::cout << "len: " << conlength << '\n' << "enc: " << enctype;
-		
+
 		return buf;
 	}
 
-	// will probably be the same on every platform
-	void urlDecoder(std::string &url, unsigned int &port, std::string headers)
+	// http, but with SSL
+	char *getrawS(std::string &url, unsigned int port)
 	{
+	}
+
+	// deletes all headers of the url, be careful
+	void urlDecoder(std::string &url, unsigned int &port)
+	{
+		int index = 0;
+		std::string portString;
+
+		// if someone enters https://google.com:80, it will use port 80 and no https
+
+		// delete https
+		if (startsWith(url.c_str(), "https://"))
+		{
+			port = 443;
+			// cut part of url of
+			url.erase(0, 8);
+		}
+		// delete http
+		else if (startsWith(url.c_str(), "http://"))
+		{
+			port = 80;
+			url.erase(0, 7);
+		}
+
+		// delete headers
+		while (url[index] != '/' && index < url.size())
+		{
+			index++;
+		}
+		url.erase(index, url.size() - 1);
+
+		// get port
+		index = 0;
+		while (url[index] != ':' && index < url.size())
+		{
+			index++;
+		}
+		// if index == url.size() -1, there was no : found in the url
+		if (index != url.size())
+		{
+			index++;
+			// port is at the end of the string so we can go on until we're there
+			while (index < url.size())
+			{
+				// add chars to portstring
+				portString += url[index];
+				index++;
+			}
+			port = std::stoul(portString);
+			// remove port from string
+			url.erase(url.size() - portString.size() - 1, portString.size() + 1);
+		}
+
 	}
 
 };
