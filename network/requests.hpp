@@ -9,8 +9,8 @@
 
 #include <iostream>
 
-#include "../libs/stringFunctions.h"
-#include "../compression/compression.h"
+#include "../libs/stringFunctions.hpp"
+#include "../compression/compression.hpp"
 // openssl header for secured socket
 #include <openssl/ssl.h>
 

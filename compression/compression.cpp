@@ -1,5 +1,5 @@
 #include <libdeflate.h>
-#include "compression.h"
+#include "compression.hpp"
 
 
 /**

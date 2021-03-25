@@ -1,4 +1,4 @@
-#include "stringFunctions.h"
+#include "stringFunctions.hpp"
 
 
 // check if *data starts with *test

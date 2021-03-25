@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 
-#include "../libs/stringFunctions.h"
+#include "../libs/stringFunctions.hpp"
 // disable gcc string warnings because it works and it's just "it's not allowed by iso standard" i do not care. this is the easiest way without having to rewrite all my functions and it works just as intended
 
 std::vector<std::string> table;
