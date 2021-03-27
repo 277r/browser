@@ -17,7 +17,8 @@
 
 namespace request {
 	// looks at port and parses argument to corresponding function
-	char* getByUrl(std::string &url, unsigned int port);
+	int initSSL();
+	char *getByUrl(std::string &url, unsigned int port);
 	char *getraw(std::string &url, unsigned int port);
 	// S stands for secure in this case
 	char *getrawS(std::string &url, unsigned int port);

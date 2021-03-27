@@ -13,6 +13,9 @@ int main()
 	std::string h;
 	std::cin >> h;
 	unsigned int u = 0;
+
+	// call initSSL when starting up
+	request::initSSL();
 	request::urlDecoder(h, u);
 	std::cout << request::getByUrl(h, u) << std::endl;
 	/*
