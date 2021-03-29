@@ -5,7 +5,7 @@ OBJ = ${SRC:.cpp=.o}
 
 # need more flags
 # -L/usr/lib/gcc/x86_64-linux-gnu/8/ -L/usr/lib/gcc/x86_64-linux-gnu/8/../../../x86_64-linux-gnu/ -L/usr/lib/gcc/x86_64-linux-gnu/8/../../../../lib/ -L/lib/x86_64-linux-gnu/ -L/lib/../lib/ -L/usr/lib/x86_64-linux-gnu/ -L/usr/lib/../lib/ -L/usr/lib/gcc/x86_64-linux-gnu/8/../../../ -L/lib/
-LDFLAGS = -ldeflate -lstdc++ -lssl -lcrypto
+LDFLAGS = -ldeflate -lstdc++ -lssl -lcrypto  -lglfw -lGL -lGLEW
 CC = g++
 LD = ld
 
