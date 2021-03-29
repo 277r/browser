@@ -3,4 +3,7 @@
 // other thing that is apparently useful
 #include <GLFW/glfw3.h>
 #include <math.h>
-void drawPolygonh(float cx, float cy, float b, int segments);
+namespace Render {
+	void drawPolygonh(float cx, float cy, float b, int segments);
+};
+
