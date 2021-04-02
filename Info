@@ -1,0 +1,4 @@
+Files&Folders contains locations of files and Folders, there is info in that
+
+the way this project is structured is quite simple, every file that is not main.cpp gets compressed to an object, later we link it all together after also having compressed main.cpp
+every folder has a task and should be able to access functions from other folders

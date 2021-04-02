@@ -1,6 +1,7 @@
 deps		file listing dependencies
 Makefile	file that builds this
 main.cpp	main entry point of the browser
+diagram.drawio	file that kind of shows how folders and their functions should be connected
 compression/	folder that contains compression/decompression functions
 javascript/	folder containing javascript engine
 libs/		folder containing files with functions i don't wanna make a folder for because i'd have too many folders

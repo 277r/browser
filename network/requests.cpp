@@ -241,9 +241,9 @@ namespace request
 		sendData += "User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:88.0) Gecko/20100101 Firefox/88.0\r\n";
 		sendData += "Host: " + url + "\r\n";
 		sendData += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8\r\n";
-		sendData += "Accept-Language: en-us\r\n";
+		sendData += "Accept-Language: en-US\r\n";
 		sendData += "Accept-Encoding: gzip\r\n";
-		sendData += "Connection: keep-alive\r\n";
+		sendData += "Connection: Keep-Alive\r\n";
 
 		sendData += "\r\n";
 		//std::cout << sendData.c_str();

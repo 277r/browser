@@ -5,5 +5,5 @@
 #include <math.h>
 namespace Render {
 	void drawPolygonh(float cx, float cy, float b, int segments);
+	void init();
 };
-

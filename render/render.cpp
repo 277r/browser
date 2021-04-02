@@ -30,4 +30,55 @@ namespace Render {
 		}
 		glEnd();
 	}
+	void init(){
+		GLFWwindow *window;
+		// initialize glfw
+		if (!glfwInit())
+		{
+			return;
+		}
+
+		// create window
+		window = glfwCreateWindow(800, 600, "h browser", NULL, NULL);
+		// error if no window
+		if (!window)
+		{
+			glfwTerminate();
+			return;
+		}
+		// do stuff with window
+		glfwMakeContextCurrent(window);
+		// initialize glew
+		/*
+	if (!glewInit())
+	{
+		return -1;
+	}*/
+
+		int width, height;
+		glfwGetFramebufferSize(window, &width, &height);
+		glViewport(0, 0, width, height);
+
+		// set interval so we don't make too much useless frames
+		glfwSwapInterval(1);
+
+		/*
+	// generate buffers
+	unsigned int buffer;
+	glGenBuffers(1, &buffer);
+*/
+		while (!glfwWindowShouldClose(window))
+		{
+
+			glClear(GL_COLOR_BUFFER_BIT);
+
+			// render here (before glfwswapBuffers)
+			
+			glfwSwapBuffers(window);
+
+			glfwPollEvents();
+		}
+		glfwTerminate();
+	}
+
 };
